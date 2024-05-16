@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 
 const formSchema = z.object({
   id: z.string(),
-  costumerId: z.string(),
+  customerId: z.string(),
   amount: z.coerce.number(),
   status: z.enum(['pending', 'paid']),
   date: z.string(),
@@ -16,8 +16,8 @@ const formSchema = z.object({
 const CreateInvoice = formSchema.omit({ id: true, date: true });
 
 export async function createInvoice(formData: FormData) {
-  const { costumerId, amount, status } = CreateInvoice.parse({
-    costumerId: formData.get('costumerId'),
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
@@ -25,7 +25,7 @@ export async function createInvoice(formData: FormData) {
   const date = new Date().toISOString().split('T')[0];
 
   await sql`INSERT INTO INVOICES (costumer_id, amount, status, date)
-       VALUES(${costumerId}, ${amountInCents}, ${status}, ${date})
+       VALUES(${customerId}, ${amountInCents}, ${status}, ${date})
       `;
 
   revalidatePath('/dashboard/invoices');
